@@ -9,9 +9,13 @@ if __name__ == "__main__":
 	
 	# scan
 	print("Scanning ...")
-	ts = Twitter_scan(settings.APP_KEY,	settings.APP_SECRET, settings.OAUTH_TOKEN, settings.OAUTH_TOKEN_SECRET)
+	ts = Twitter_scan(settings.APP_KEY,
+			settings.APP_SECRET,
+			settings.OAUTH_TOKEN,
+			settings.OAUTH_TOKEN_SECRET)
 	try:				
-		logs = ts.twitter_hits(settings.TWITTER_AC_MONITOR, settings.KEYWORDS)
+		logs = ts.twitter_hits(settings.TWITTER_AC_MONITOR,
+					settings.KEYWORDS)
 	except Exception as e:
 		print("***** Error retrieving the tweets ****")
 		print(e)
