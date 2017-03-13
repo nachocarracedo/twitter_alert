@@ -21,7 +21,8 @@ if __name__ == "__main__":
 	if os.path.isfile("./csv/last_tweet.csv"):
 		last_tweet = pd.read_csv("./csv/last_tweet.csv", encoding='utf-8')
 		incremental = True		
-		
+	
+	# scan tweets	
 	try:				
 		logs = ts.twitter_hits(settings.TWITTER_AC_MONITOR,
 						settings.KEYWORDS,
@@ -41,7 +42,7 @@ if __name__ == "__main__":
 	
 	if tweets_to_send_df.shape[0] > 0:
 		# generate email body
-		msg = "GIGTAT twitter scan found matches!! :\n\n"
+		msg = "Scan found matches!! :\n\n"
 		for t in range(tweets_to_send_df.shape[0]):
 			msg = msg + tweets_to_send_df.festival_id.iloc[t] + " --- " + tweets_to_send_df.date.iloc[t] + "\n"
 			msg = msg + tweets_to_send_df.tweet_text_hit.iloc[t] + "\n\n"
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 		except Exception as e:
 			print ('Something went wrong sending the email:')
 			print (e)
-		else:
+		else: 
 			tweet_hits_df["sent"] = tweet_hits_df["sent"].map(lambda x: 1 if x==0 else x)
 			
 	else:
