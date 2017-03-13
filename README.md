@@ -1,4 +1,4 @@
-## GIGTAT twitter alerts
+## Twitter alerts
 
 This script will check twitter accounts and will scan tweets looking for keywords. If keywords are found an email is sent with the twitter account, time of posting, and tweet text.
 
