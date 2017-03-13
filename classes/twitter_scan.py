@@ -49,7 +49,7 @@ class Twitter_scan:
 					self.tweet_id_hit.append(t["id"])
 					
 		# last tweet id to dataframe
-		last_tweet_df = pd.DataFrame({'festival':accounts, 'last_tweet_id':self.last_tweet_id})
+		last_t_df = pd.DataFrame({'festival':accounts, 'last_tweet_id':self.last_tweet_id})
 		
 		# hits to dataframe
 		th2_df = pd.DataFrame({'festival_id':self.tweet_account_hit,
@@ -57,9 +57,7 @@ class Twitter_scan:
 					'date':self.tweet_date_hit,
 					'tweet_id':self.tweet_id_hit})
 		th2_df["sent"] = 0			
-		if os.path.isfile("./csv/tweet_hits.csv"):
-			th1_df = pd.read_csv('./csv/tweet_hits.csv')
-			th2_df = pd.concat([th1_df, th2_df])
+		
 			
 		#return dataframes
-		return (last_tweet_df,th2_df)
+		return (last_t_df,th2_df)

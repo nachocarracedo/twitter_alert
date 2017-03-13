@@ -1,6 +1,5 @@
 import settings
 import sys
-import os.path
 import pandas as pd
 
 from classes.twitter_scan import Twitter_scan
@@ -9,7 +8,10 @@ from classes.twitter_email import Twitter_email
 
 if __name__ == "__main__":
 	
-	#### scan
+	# start logs
+	log_ob = Twitter_log_csv("csv")
+	
+	# connect to tw
 	print("Scanning ...")
 	ts = Twitter_scan(settings.APP_KEY,
 			settings.APP_SECRET,
@@ -17,28 +19,25 @@ if __name__ == "__main__":
 			settings.OAUTH_TOKEN_SECRET)
 			
 	# is incremental search? 
-	incremental = False
-	if os.path.isfile("./csv/last_tweet.csv"):
-		last_tweet = pd.read_csv("./csv/last_tweet.csv", encoding='utf-8')
-		incremental = True		
+	incremental = log_ob.incremental_log()
 	
 	# scan tweets	
 	try:				
 		logs = ts.twitter_hits(settings.TWITTER_AC_MONITOR,
 						settings.KEYWORDS,
 						incremental,
-						last_tweet)
+						log_ob.last_tweets_df)
 	except Exception as e:
-		print("***** Error retrieving the tweets ****")
+		print("***** Error retrieving the tweets: ")
 		print(e)
 		sys.exit(1)
-		
-	last_tweets_df = logs[0]
-	tweet_hits_df = logs[1]
-		
-		
+	
+	# update logs	
+	log_ob.last_tweets_df = logs[0]
+	log_ob.update_hit_log(logs[1])	
+
 	#### send notifications
-	tweets_to_send_df = tweet_hits_df[tweet_hits_df.sent == 0]
+	tweets_to_send_df = log_ob.tweet_hits_df[log_ob.tweet_hits_df.sent == 0]
 	
 	if tweets_to_send_df.shape[0] > 0:
 		# generate email body
@@ -58,17 +57,17 @@ if __name__ == "__main__":
 		try:
 			tmail.send_email(msg)
 		except Exception as e:
-			print ('Something went wrong sending the email:')
+			print ('***** Something went wrong sending the email:')
 			print (e)
 		else: 
-			tweet_hits_df["sent"] = tweet_hits_df["sent"].map(lambda x: 1 if x==0 else x)
+			log_ob.tweet_hits_df["sent"] = log_ob.tweet_hits_df["sent"].map(lambda x: 1 if x==0 else x)
 			
 	else:
 		print("Matches NOT found ... ")
 	
 	
-	#### save logs
+	# save logs
 	print("Saving logs ... ")	
-	Twitter_log_csv().save_csv([last_tweets_df,tweet_hits_df],['last_tweet.csv','tweet_hits.csv'])
+	log_ob.save_csv()
 	print("Done!")
 	

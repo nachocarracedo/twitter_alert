@@ -12,10 +12,12 @@ class Twitter_email:
 							
 	def send_email(self, text):
 		""" sends email with text as body """
+		subject = "Twitter ALERT"
 		self.server.ehlo()
 		self.server.starttls()
 		self.server.login(self.username,self.password)
-		self.server.sendmail(self.username, self.email_to, text)
+		message = 'Subject: {}\n\n{}'.format(subject, text)
+		self.server.sendmail(self.username, self.email_to, message)
 		self.server.quit()
 		print("Email sent successfully")
         
