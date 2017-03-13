@@ -1,12 +1,12 @@
 from twython import Twython
 import pandas as pd
-import os.path
 import string
+import os.path
 
 class Twitter_scan:
 
 	def __init__(self, APP_KEY,APP_SECRET,OAUTH_TOKEN,OAUTH_TOKEN_SECRET):
-	
+		""" init twitter API connection"""	
 		self.twitter = Twython(APP_KEY,APP_SECRET,OAUTH_TOKEN,OAUTH_TOKEN_SECRET)
 		self.tweet_text_hit= []
 		self.tweet_date_hit= []
@@ -14,25 +14,23 @@ class Twitter_scan:
 		self.tweet_account_hit = []
 		self.last_tweet_id = []
 							
-	def twitter_hits(self, accounts, keywords):
-	
-		# Incremental search 
-		incremental = False
-		if os.path.isfile("./csv/last_tweet.csv"):
-			last_tweet = pd.read_csv("./csv/last_tweet.csv", encoding='utf-8')
-			incremental = True
+	def twitter_hits(self, accounts, keywords, incremental, last_t_df=pd.DataFrame()):
+		""" Scans accounts for keywords. If incremental == False
+		it will scan last 2 tweets. Otherwise it will scan only new tweets.
+		Returns 2 dataframes: last_tweet_df: id of last tweet scanned,
+		th2_df: info of tweets with keyworks (text, creation)"""		
 			
 		# Get and scan tweets 
 		for festival_id in accounts:
-			if incremental: # get only new tweets since last retreival
-				lt = int(last_tweet[last_tweet["festival"]==festival_id]["last_tweet_id"].iloc[0])
+			if incremental: 
+				lt = int(last_t_df[last_t_df["festival"]==festival_id]["last_tweet_id"].iloc[0])
 				tweets = self.twitter.get_user_timeline(screen_name=festival_id,
-													since_id=lt,
-													exclude_replies=True)				
-			else: # if there is no file ./csv/last_tweet.csv get last 2 tweets
+											since_id=lt,
+											exclude_replies=True)				
+			else:
 				tweets = self.twitter.get_user_timeline(screen_name=festival_id,
-													count=2,
-													exclude_replies=True)
+											count=2,
+											exclude_replies=True)
 										
 			# get last tweet id 
 			if len(tweets) > 0:

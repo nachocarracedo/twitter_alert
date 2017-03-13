@@ -4,6 +4,8 @@ This script will check twitter accounts and will scan tweets looking for keyword
 
 First time the script is run, if `./csv/last_tweet.csv` doesn't exist, the script will check the last 2 tweets for each account. Following executions of the script will check only new tweets.
 
+If there is an error sending the notifications via email the tweets will be sent next time the notification is successful.
+
 A log of all tweets that have keywords in it will be saved in `./csv/tweet_hits.csv`.
 
 

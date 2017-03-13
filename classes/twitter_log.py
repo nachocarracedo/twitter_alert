@@ -1,7 +1,9 @@
 class Twitter_log_csv:
 			
-	def save_csv(self, last_tweets_df,tweet_hits_df):
-		# save last tweet				
-		last_tweets_df.to_csv("./csv/last_tweet.csv", index=False, encoding='utf-8')
-		# save alerts sent
-		tweet_hits_df.to_csv("./csv/tweet_hits.csv", index=False)
+	def save_csv(self, dfs_list, names_list):
+		""" get list of dataframes and list of strings.
+		Saves dataframes to .csv with names of strings
+		inside /csv folder"""
+		for i in range(len(dfs_list)):
+			dfs_list[i].to_csv("./csv/"+names_list[i], index=False, encoding='utf-8')
+			
